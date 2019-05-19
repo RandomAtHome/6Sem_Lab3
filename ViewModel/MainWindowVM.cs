@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -10,42 +12,51 @@ namespace ViewModel
 {
     public interface IConfirmUIService
     {
-        bool Confirm(String text);
+        bool ConfirmAction(String text, String title);
         // void ReportError(string message);
     }
-    class MainWindowVM
+    class MainWindowVM : INotifyPropertyChanged
     {
-        ModelDataCollectionVM dataView = null;
+        ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
+        ModelDataInputVM newModelInputView = new ModelDataInputVM();
+        int selectedIndexInList = -1; 
+
         public static RoutedCommand AddModelCommand = new RoutedCommand("AddModel", typeof(_6Sem_Lab2.MainWindow));
         public static RoutedCommand DrawCommand = new RoutedCommand("Draw", typeof(_6Sem_Lab2.MainWindow));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private readonly IConfirmUIService ui;
+
+        public ModelDataCollectionVM DataView { get => dataView;
+            private set
+            {
+                dataView = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DataView"));
+            }
+        }
+
+        public int SelectedIndexInList { get => selectedIndexInList; set => selectedIndexInList = value; }
 
         public MainWindowVM()
-        {
-            InitializeComponent();
-            dataView = new ModelDataView(FindResource("key_ObsModelData") as ObservableModelData);
-            boundsStack.DataContext = dataView;
-        }
+        {}
 
         private void CommandNew_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (dataView.modelDatas.HasChanged)
+            if (DataView.ModelDatas.HasChanged)
             {
-                MessageBoxResult res = MessageBox.Show("Do you want to save changes?", "Warning", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
+                if (ui.ConfirmAction("Do you want to save changes?", "Warning"))
                 {
                     CommandSave_Executed(this, null);
                 }
             }
-            Resources["key_ObsModelData"] = new ObservableModelData();
-            dataView.modelDatas = FindResource("key_ObsModelData") as ObservableModelData;
+            DataView = new ModelDataCollectionVM(new ObservableModelData());
         }
 
         private void CommandOpen_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (dataView.modelDatas.HasChanged)
+            if (DataView.ModelDatas.HasChanged)
             {
-                MessageBoxResult res = MessageBox.Show("Do you want to save changes?", "Warning", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
+                if (ui.ConfirmAction("Do you want to save changes?", "Warning"))
                 {
                     CommandSave_Executed(this, null);
                 }
@@ -71,7 +82,7 @@ namespace ViewModel
             {
                 try
                 {
-                    dataView.modelDatas.HasChanged = false;
+                    DataView.ModelDatas.HasChanged = false;
                     Save(dg.FileName);
                 }
                 catch (Exception)
@@ -83,34 +94,27 @@ namespace ViewModel
 
         private void CommandDelete_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            dataView.modelDatas.Remove_At(modelsList.SelectedIndex);
+            DataView.ModelDatas.Remove_At(modelsList.SelectedIndex);
         }
 
         private void CommandSave_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (dataView != null)
-            {
-                e.CanExecute = dataView.modelDatas.HasChanged;
-            }
+            e.CanExecute = DataView.ModelDatas.HasChanged;
         }
 
         private void isItemSelected_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (modelsList != null)
-            {
-                e.CanExecute = (modelsList.SelectedIndex != -1);
-            }
+               e.CanExecute = (SelectedIndexInList != -1);
         }
 
         private void CommandAddModel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (TryFindResource("key_DummyModel") is ModelData dummy_model_ref)
-                dataView.modelDatas.Add_ModelData(new ModelData(dummy_model_ref.NodeCount, dummy_model_ref.Parameter));
+            DataView.ModelDatas.Add_ModelData(new ModelData(int.Parse(newModelInputView.NodeCount), double.Parse(newModelInputView.NodeCount)));
         }
 
         private void CommandDraw_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            dataView.Draw(chart, dataView.modelDatas[modelsList.SelectedIndex], dataView.modelDatas.Farthest(modelsList.SelectedIndex));
+            DataView.Draw(chart, DataView.ModelDatas[modelsList.SelectedIndex], DataView.ModelDatas.Farthest(modelsList.SelectedIndex));
         }
 
         private void CommandAddModel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -133,14 +137,11 @@ namespace ViewModel
             e.CanExecute = true;
         }
 
-        private void addDefaults_Click(object sender, RoutedEventArgs e) => dataView.modelDatas.AddDefaults();
+        private void addDefaults_Click(object sender, RoutedEventArgs e) => DataView.ModelDatas.AddDefaults();
 
         private void CommandDraw_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (modelsList != null)
-            {
-                e.CanExecute = (modelsList.SelectedIndex != -1);
-            }
+            e.CanExecute = (SelectedIndexInList != -1);
             if (e.CanExecute && boundsStack != null)
             {
                 foreach (FrameworkElement child in boundsStack.Children)
@@ -156,7 +157,7 @@ namespace ViewModel
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (dataView.modelDatas.HasChanged)
+            if (DataView.ModelDatas.HasChanged)
             {
                 MessageBoxResult res = MessageBox.Show("Do you want to save changes?", "Warning", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)
@@ -174,7 +175,7 @@ namespace ViewModel
             {
                 fs = File.Create(filename);
                 BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(fs, dataView.modelDatas);
+                bf.Serialize(fs, DataView.ModelDatas);
                 res = true;
             }
             catch (Exception ex)
@@ -197,8 +198,8 @@ namespace ViewModel
                 fs = File.OpenRead(filename);
                 BinaryFormatter bf = new BinaryFormatter();
                 Resources["key_ObsModelData"] = bf.Deserialize(fs) as ObservableModelData;
-                dataView.modelDatas = FindResource("key_ObsModelData") as ObservableModelData;
-                dataView.modelDatas.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => dataView.modelDatas.HasChanged = true;
+                DataView.ModelDatas = FindResource("key_ObsModelData") as ObservableModelData;
+                DataView.ModelDatas.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => DataView.ModelDatas.HasChanged = true;
                 result = true;
             }
             catch (Exception ex)

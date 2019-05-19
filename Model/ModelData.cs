@@ -6,10 +6,10 @@ using System.Collections.Generic;
 namespace Model
 {
     [Serializable]
-    public class ModelData : IDataErrorInfo
+    public class ModelData
     {
-        static double pMin = -10.0;
-        static double pMax = 10.0;
+        private static double pMin = -10.0;
+        private static double pMax = 10.0;
         void F(int n, double p)
         {
             NodeValues[n] = Math.Sin(p * Math.PI * Nodes[n]);
@@ -20,34 +20,8 @@ namespace Model
         public double Parameter { get; private set; }
         public double[] Nodes { get; private set; }
         public double[] NodeValues { get; private set; }
-
-        public string Error => throw new NotImplementedException();
-
-        public string this[string columnName]
-        {
-            get
-            {
-                string message = string.Empty;
-                switch (columnName)
-                {
-                    case "Parameter":
-                        if (pMin > Parameter || Parameter > pMax)
-                        {
-                            message = "P value is offbounds!";
-                        }
-                        break;
-                    case "NodeCount":
-                        if (NodeCount < 3)
-                        {
-                            message = "Node count is less than 3!";
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return message;
-            }
-        }
+        public static double PMin { get => pMin; private set => pMin = value; }
+        public static double PMax { get => pMax; private set => pMax = value; }
 
         public ModelData(int node_count, double p)
         {
@@ -61,10 +35,6 @@ namespace Model
                 Nodes[i] = step * i;
                 F(i, p);
             }
-        }
-        public ModelData()
-        {
-            Parameter = pMin;
         }
 
         public double[] XinBounds(double x1, double x2) => (from node in Nodes
