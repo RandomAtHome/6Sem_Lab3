@@ -7,12 +7,16 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace ViewModel
 {
-    public interface IConfirmUIService
+    public interface IUIService
     {
+        Chart UIChart { get; }
+
         bool ConfirmAction(String text, String title);
+        void ShowErrorMessage(String text);
         // void ReportError(string message);
     }
     class MainWindowVM : INotifyPropertyChanged
@@ -25,7 +29,7 @@ namespace ViewModel
         public static RoutedCommand DrawCommand = new RoutedCommand("Draw", typeof(_6Sem_Lab2.MainWindow));
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly IConfirmUIService ui;
+        private readonly IUIService ui = null;
 
         public ModelDataCollectionVM DataView { get => dataView;
             private set
@@ -37,10 +41,12 @@ namespace ViewModel
 
         public int SelectedIndexInList { get => selectedIndexInList; set => selectedIndexInList = value; }
 
-        public MainWindowVM()
-        {}
+        public MainWindowVM(IUIService ui)
+        {
+            this.ui = ui;
+        }
 
-        private void CommandNew_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void SaveIfChanged()
         {
             if (DataView.ModelDatas.HasChanged)
             {
@@ -49,18 +55,16 @@ namespace ViewModel
                     CommandSave_Executed(this, null);
                 }
             }
+        }
+        private void CommandNew_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveIfChanged();
             DataView = new ModelDataCollectionVM(new ObservableModelData());
         }
 
         private void CommandOpen_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (DataView.ModelDatas.HasChanged)
-            {
-                if (ui.ConfirmAction("Do you want to save changes?", "Warning"))
-                {
-                    CommandSave_Executed(this, null);
-                }
-            }
+            SaveIfChanged();
             var dg = new Microsoft.Win32.OpenFileDialog();
             if (dg.ShowDialog() == true)
             {
@@ -70,7 +74,7 @@ namespace ViewModel
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Failed to open file!");
+                    ui.ShowErrorMessage("Failed to open file!");
                 }
             }
         }
@@ -94,7 +98,7 @@ namespace ViewModel
 
         private void CommandDelete_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            DataView.ModelDatas.Remove_At(modelsList.SelectedIndex);
+            DataView.ModelDatas.Remove_At(SelectedIndexInList);
         }
 
         private void CommandSave_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -114,7 +118,7 @@ namespace ViewModel
 
         private void CommandDraw_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            DataView.Draw(chart, DataView.ModelDatas[modelsList.SelectedIndex], DataView.ModelDatas.Farthest(modelsList.SelectedIndex));
+            DataView.Draw(ui.UIChart, DataView.ModelDatas[SelectedIndexInList], DataView.ModelDatas.Farthest(SelectedIndexInList));
         }
 
         private void CommandAddModel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -155,17 +159,7 @@ namespace ViewModel
             }
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            if (DataView.ModelDatas.HasChanged)
-            {
-                MessageBoxResult res = MessageBox.Show("Do you want to save changes?", "Warning", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                {
-                    CommandSave_Executed(this, null);
-                }
-            }
-        }
+        private void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
 
         public bool Save(string filename)
         {
