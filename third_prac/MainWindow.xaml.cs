@@ -29,12 +29,17 @@ namespace third_prac
     }
     public class UI : IUIService
     {
-        public Chart UIChart => throw new NotImplementedException();
+        public Chart UIChart
+        {
+            get
+            {
+                return 
+            }
+        };
 
         public bool ConfirmAction(string text, string title)
         {
-            MessageBoxResult res = MessageBox.Show(text, title, MessageBoxButton.YesNo);
-            return res == MessageBoxResult.Yes;
+            return MessageBox.Show(text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
         public void ShowErrorMessage(string text)
