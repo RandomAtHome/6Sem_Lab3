@@ -115,7 +115,7 @@ namespace ViewModel
     }
 
     [Serializable]
-    public class ObservableModelData : ObservableCollection<ModelData>
+    public class ObservableModelData : ObservableCollection<ModelDataVM>
     {
         private bool _hasChanged;
 
@@ -129,25 +129,24 @@ namespace ViewModel
             set => _hasChanged = value;
         }
 
-        public void Add_ModelData(ModelData modelData) => Add(modelData);
+        public void Add_ModelData(ModelDataVM modelDataVM) => Add(modelDataVM);
 
         public void Remove_At(int index) => RemoveAt(index);
 
         public void AddDefaults()
         {
-            Add_ModelData(new ModelData(10, -2));
-            Add_ModelData(new ModelData(3, 2));
-            Add_ModelData(new ModelData(24, 3));
-            Add_ModelData(new ModelData(24, 5));
-            Add_ModelData(new ModelData(50, 0));
-            Add_ModelData(new ModelData(100, 5));
-            Add_ModelData(new ModelData(24, -6));
+            Add_ModelData(new ModelDataVM(new ModelData(10, -2)));
+            Add_ModelData(new ModelDataVM(new ModelData(3, 2)));
+            Add_ModelData(new ModelDataVM(new ModelData(24, 3)));
+            Add_ModelData(new ModelDataVM(new ModelData(24, 5)));
+            Add_ModelData(new ModelDataVM(new ModelData(50, 0)));
+            Add_ModelData(new ModelDataVM(new ModelData(100, 5)));
+            Add_ModelData(new ModelDataVM(new ModelData(24, -6)));
         }
 
-        public ModelData Farthest(int index) => (from item in Items
+        public ModelDataVM Farthest(int index) => (from item in Items
                                                  orderby Math.Abs(item.Parameter - Items[index].Parameter) descending
                                                  select item).First();
-
 
         public override string ToString()
         {

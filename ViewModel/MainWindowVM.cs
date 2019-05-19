@@ -22,7 +22,7 @@ namespace ViewModel
     class MainWindowVM : INotifyPropertyChanged
     {
         ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
-        ModelDataInputVM newModelInputView = new ModelDataInputVM();
+        ModelDataVM newModelInputView = new ModelDataVM();
         int selectedIndexInList = -1; 
 
         public static RoutedCommand AddModelCommand = new RoutedCommand("AddModel", typeof(_6Sem_Lab2.MainWindow));

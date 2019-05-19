@@ -33,9 +33,9 @@ namespace third_prac
         {
             get
             {
-                return 
+                return uiChart;
             }
-        };
+        }
 
         public bool ConfirmAction(string text, string title)
         {

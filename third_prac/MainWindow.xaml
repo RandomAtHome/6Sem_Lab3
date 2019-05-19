@@ -1,12 +1,97 @@
-﻿<Window x:Class="third_prac.MainWindow"
+﻿<Window
+        x:Class="third_prac.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:third_prac"
+        xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
+        xmlns:Charting="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Lab #3 Chukharev 301" Height="600" Width="1000"
+        Closed="Window_Closed"
+        DataContext="{DynamicResource key_ObsModelData}">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type }">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Name}"/>
+                <Label FontWeight="DemiBold" Content="{Binding Price}"/>
+                <Label Content="{Binding Amount}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{x:Static local:MainWindow.AddModelCommand}"
+                    Gesture="Ctrl+Alt+A"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="CommandNew_Executed"/>
+        <CommandBinding Command="ApplicationCommands.Open"
+                        Executed="CommandOpen_Executed"/>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="CommandSave_Executed"
+                        CanExecute="CommandSave_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Delete"
+                        Executed="CommandDelete_Executed"
+                        CanExecute="isItemSelected_CanExecute"/>
+        <!--
+        <CommandBinding Command="{x:Static local:MainWindow.AddModelCommand}"
+                        Executed="CommandAddModel_Executed"
+                        CanExecute="CommandAddModel_CanExecute"/>
+        <CommandBinding Command="{x:Static local:MainWindow.DrawCommand}"
+                        Executed="CommandDraw_Executed"
+                        CanExecute="CommandDraw_CanExecute"/>
+        -->
+    </Window.CommandBindings>
     <Grid>
-        
+        <Menu Height="20" VerticalAlignment="Top">
+            <MenuItem Header="_File" Width="100">
+                <MenuItem Header="_New" Command="ApplicationCommands.New"/>
+                <MenuItem Header="_Open" Command="ApplicationCommands.Open"/>
+                <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
+            </MenuItem>
+            <MenuItem x:Name="menuItem" Header="_Edit" Width="100">
+                <MenuItem Header="_Add" Command="{x:Static local:MainWindow.AddModelCommand}"/>
+                <MenuItem Header="_Remove" Command="ApplicationCommands.Delete"/>
+            </MenuItem>
+            <MenuItem Header="_Draw" Width="100" Command="{x:Static local:MainWindow.DrawCommand}"/>
+        </Menu>
+        <ToolBar Height="25" VerticalAlignment="Top" Margin="0,20,0,0">
+            <Button Content="Open" Command="ApplicationCommands.Open"/>
+            <Button Content="Save" Command="ApplicationCommands.Save"/>
+            <Button Content="Add" Command="{x:Static local:MainWindow.AddModelCommand}"/>
+            <Button Content="Remove" Command="ApplicationCommands.Delete"/>
+            <Button Content="Draw" Command="{x:Static local:MainWindow.DrawCommand}"/>
+        </ToolBar>
+        <WindowsFormsHost x:Name="winChartHost" HorizontalAlignment="Left" Height="416" Margin="10,45,0,0" VerticalAlignment="Top" Width="740">
+            <Charting:Chart x:Name="uiChart">
+                <Charting:Chart.Legends>
+                    <Charting:Legend Name="notScaledLegend"/>
+                </Charting:Chart.Legends>
+                <Charting:Chart.ChartAreas>
+                    <Charting:ChartArea Name="notScaledArea"/>
+                    <Charting:ChartArea Name="scaledArea"/>
+                </Charting:Chart.ChartAreas>
+                <Charting:Chart.Series>
+                    <Charting:Series Name="md1NotScaled" Color="DarkRed" ChartType="Spline" ChartArea="notScaledArea"/>
+                    <Charting:Series Name="md2NotScaled" Color="DarkGreen" ChartType="Spline" ChartArea="notScaledArea"/>
+                    <Charting:Series Name="md1Scaled" Color="DarkRed" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Circle" MarkerSize="5"/>
+                    <Charting:Series Name="md2Scaled" Color="DarkGreen" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Diamond" MarkerSize="5"/>
+                </Charting:Chart.Series>
+            </Charting:Chart>
+        </WindowsFormsHost>
+        <ListBox x:Name="modelsList" ItemsSource="{Binding}" ItemTemplate="{DynamicResource key_Template}" HorizontalAlignment="Left" Height="515" Margin="755,45,0,0" VerticalAlignment="Top" Width="227" IsSynchronizedWithCurrentItem="True" RenderTransformOrigin="1.176,0.468"/>
+        <StackPanel x:Name="newModelStack" HorizontalAlignment="Left" Height="94" Margin="10,466,0,0" VerticalAlignment="Top" Width="140">
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="pInput" Text="{Binding Path=Parameter, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="nodeCountInput" Text="{Binding Path=NodeCount, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
+            <Button Content="Add new ModelData" Command="{x:Static local:MainWindow.AddModelCommand}"/>
+            <Button Content="Add defaults" Click="addDefaults_Click"/>
+        </StackPanel>
+        <StackPanel Margin="155,466,592,72" Orientation="Horizontal" x:Name="boundsStack">
+            <TextBox x:Name="leftBound" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding Path=X1, ValidatesOnDataErrors=True}" VerticalAlignment="Top" Width="120"/>
+            <TextBox x:Name="rightBound" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding Path=X2, ValidatesOnDataErrors=True}" VerticalAlignment="Top" Width="120"/>
+        </StackPanel>
+
     </Grid>
 </Window>
