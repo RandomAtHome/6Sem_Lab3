@@ -10,10 +10,14 @@ namespace ViewModel
 {
     public class ModelDataVM : INotifyPropertyChanged, IDataErrorInfo
     {
-        private ModelData modelData;
+        private readonly ModelData modelData;
         public event PropertyChangedEventHandler PropertyChanged;
         public double Parameter { get => modelData.Parameter; }
         public int NodeCount { get => modelData.NodeCount; }
+        public double[] Nodes => modelData.Nodes;
+        public double[] NodeValues => modelData.NodeValues;
+        public double[] XinBounds(double x1, double x2) => modelData.XinBounds(x1, x2);
+        public double[] YinBounds(double x1, double x2) => modelData.YinBounds(x1, x2);
         public string Error => throw new NotImplementedException();
         public string this[string columnName]
         {

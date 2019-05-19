@@ -9,14 +9,12 @@
         xmlns:Charting="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
         mc:Ignorable="d"
         Title="Lab #3 Chukharev 301" Height="600" Width="1000"
-        Closed="Window_Closed"
-        DataContext="{DynamicResource key_ObsModelData}">
+        Closed="Window_Closed">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type }">
+        <DataTemplate DataType="{x:Type vm:}">
             <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Name}"/>
-                <Label FontWeight="DemiBold" Content="{Binding Price}"/>
-                <Label Content="{Binding Amount}"/>
+                <Label Content="{Binding Parameter}"/>
+                <Label Content="{Binding NodeCount}"/>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>

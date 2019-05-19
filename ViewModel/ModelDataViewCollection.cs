@@ -83,7 +83,7 @@ namespace ViewModel
             this.ModelDatas = modelDatas;
         }
 
-        public void Draw(Chart chart, ModelData md1, ModelData md2)
+        public void Draw(Chart chart, ModelDataVM md1, ModelDataVM md2)
         {
             chart.ChartAreas["notScaledArea"].AxisX.LabelStyle.Format = "F3";
             chart.ChartAreas["notScaledArea"].AxisY.LabelStyle.Format = "F3";

@@ -22,7 +22,7 @@ namespace ViewModel
     class MainWindowVM : INotifyPropertyChanged
     {
         ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
-        ModelDataVM newModelInputView = new ModelDataVM();
+        ModelDataInputVM newModelInputView = new ModelDataInputVM();
         int selectedIndexInList = -1; 
 
         public static RoutedCommand AddModelCommand = new RoutedCommand("AddModel", typeof(_6Sem_Lab2.MainWindow));
@@ -91,7 +91,7 @@ namespace ViewModel
                 }
                 catch (Exception)
                 {
-                    System.Windows.MessageBox.Show("Failed to save file!");
+                    ui.ShowErrorMessage("Failed to save file!");
                 }
             }
         }
@@ -113,7 +113,9 @@ namespace ViewModel
 
         private void CommandAddModel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            DataView.ModelDatas.Add_ModelData(new ModelData(int.Parse(newModelInputView.NodeCount), double.Parse(newModelInputView.NodeCount)));
+            DataView.ModelDatas.Add_ModelData(new ModelDataVM(
+                new ModelData(int.Parse(newModelInputView.NodeCount), double.Parse(newModelInputView.NodeCount))
+            ));
         }
 
         private void CommandDraw_Executed(object sender, ExecutedRoutedEventArgs e)
