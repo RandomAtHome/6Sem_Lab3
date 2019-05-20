@@ -158,9 +158,14 @@ namespace ViewModel
 
         private void CommandAddModel_Executed(object sender)
         {
-            DataView.ModelDatas.Add_ModelData(new ModelDataVM(
-                new ModelData(int.Parse(NewModelInputView.NodeCount), double.Parse(NewModelInputView.NodeCount))
-            ));
+            try
+            {
+                DataView.ModelDatas.Add_ModelData(new ModelDataVM(
+                    new ModelData(int.Parse(NewModelInputView.NodeCount), double.Parse(NewModelInputView.Parameter))
+                ));
+            } catch (Exception ex) {
+                ui.ShowErrorMessage("Exception: " + ex.Message);
+            }
         }
 
         private void CommandDraw_Executed(object sender)
@@ -202,7 +207,7 @@ namespace ViewModel
 
         public void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
 
-        public bool Save(string filename)
+        private bool Save(string filename)
         {
             FileStream fs = null;
             bool res = false;
@@ -224,7 +229,7 @@ namespace ViewModel
             return res;
         }
 
-        public bool Load(string filename)
+        private bool Load(string filename)
         {
             bool result = false;
             FileStream fs = null;
