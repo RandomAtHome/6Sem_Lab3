@@ -11,7 +11,7 @@
         Title="Lab #3 Chukharev 301" Height="600" Width="1000"
         Closed="Window_Closed">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:ModelDataVM}">
+        <DataTemplate DataType="{x:Type vm:}">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{Binding Parameter}"/>
                 <Label Content="{Binding NodeCount}"/>
@@ -33,14 +33,6 @@
         <CommandBinding Command="ApplicationCommands.Delete"
                         Executed="CommandDelete_Executed"
                         CanExecute="isItemSelected_CanExecute"/>
-        <!--
-        <CommandBinding Command="{x:Static local:MainWindow.AddModelCommand}"
-                        Executed="CommandAddModel_Executed"
-                        CanExecute="CommandAddModel_CanExecute"/>
-        <CommandBinding Command="{x:Static local:MainWindow.DrawCommand}"
-                        Executed="CommandDraw_Executed"
-                        CanExecute="CommandDraw_CanExecute"/>
-        -->
     </Window.CommandBindings>
     <Grid>
         <Menu Height="20" VerticalAlignment="Top">
@@ -50,17 +42,17 @@
                 <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
             </MenuItem>
             <MenuItem x:Name="menuItem" Header="_Edit" Width="100">
-                <MenuItem Header="_Add" Command="{x:Static local:MainWindow.AddModelCommand}"/>
+                <MenuItem Header="_Add" Command="{Binding AddModelCommand}"/>
                 <MenuItem Header="_Remove" Command="ApplicationCommands.Delete"/>
             </MenuItem>
-            <MenuItem Header="_Draw" Width="100" Command="{x:Static local:MainWindow.DrawCommand}"/>
+            <MenuItem Header="_Draw" Width="100" Command="{Binding DrawCommand}"/>
         </Menu>
         <ToolBar Height="25" VerticalAlignment="Top" Margin="0,20,0,0">
             <Button Content="Open" Command="ApplicationCommands.Open"/>
             <Button Content="Save" Command="ApplicationCommands.Save"/>
-            <Button Content="Add" Command="{x:Static local:MainWindow.AddModelCommand}"/>
+            <Button Content="Add" Command="{Binding AddModelCommand}"/>
             <Button Content="Remove" Command="ApplicationCommands.Delete"/>
-            <Button Content="Draw" Command="{x:Static local:MainWindow.DrawCommand}"/>
+            <Button Content="Draw" Command="{Binding DrawCommand}"/>
         </ToolBar>
         <WindowsFormsHost x:Name="winChartHost" HorizontalAlignment="Left" Height="416" Margin="10,45,0,0" VerticalAlignment="Top" Width="740">
             <Charting:Chart x:Name="uiChart">

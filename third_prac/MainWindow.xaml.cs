@@ -25,6 +25,7 @@ namespace third_prac
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowVM(new UI());
         }
     }
     public class UI : IUIService
@@ -40,6 +41,18 @@ namespace third_prac
         public bool ConfirmAction(string text, string title)
         {
             return MessageBox.Show(text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+        }
+
+        public string OpenFileDGName()
+        {
+            var dg = new Microsoft.Win32.OpenFileDialog();
+            return dg.ShowDialog() == true ? dg.FileName : string.Empty;
+        }
+
+        public string SaveFileDGName()
+        {
+            var dg = new Microsoft.Win32.SaveFileDialog();
+            return dg.ShowDialog() == true ? dg.FileName : string.Empty;
         }
 
         public void ShowErrorMessage(string text)

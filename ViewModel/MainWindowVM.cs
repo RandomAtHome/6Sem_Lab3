@@ -22,9 +22,8 @@ namespace ViewModel
         string SaveFileDGName();
         string OpenFileDGName();
         void ShowErrorMessage(string text);
-        // void ReportError(string message);
     }
-    class MainWindowVM : INotifyPropertyChanged
+    public class MainWindowVM : INotifyPropertyChanged
     {
         ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
         ModelDataInputVM newModelInputView = new ModelDataInputVM();
@@ -32,6 +31,10 @@ namespace ViewModel
 
         public ICommand AddModelCommand { get; private set; }
         public ICommand DrawCommand { get; private set; }
+        public ICommand NewCommand { get; private set; }
+        public ICommand SaveCommand { get; private set; }
+        public ICommand OpenCommand { get; private set; }
+        public ICommand DeleteCommand { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -58,6 +61,22 @@ namespace ViewModel
                 _ => CommandAddModel_CanExecute(_),
                 _ => CommandAddModel_Executed(_)
             );
+            NewCommand = new RelayCommand(
+                _ => true,
+                _ => CommandNew_Executed(_)
+            );
+            OpenCommand = new RelayCommand(
+                _ => true,
+                _ => CommandOpen_Executed(_)
+            );
+            SaveCommand = new RelayCommand(
+                _ => CommandSave_CanExecute(_),
+                _ => CommandSave_Executed(_)
+            );
+            DeleteCommand = new RelayCommand(
+                _ => isItemSelected_CanExecute(_),
+                _ => CommandDelete_Executed(_)
+            );
         }
 
         private void SaveIfChanged()
@@ -66,17 +85,17 @@ namespace ViewModel
             {
                 if (ui.ConfirmAction("Do you want to save changes?", "Warning"))
                 {
-                    CommandSave_Executed(this, null);
+                    CommandSave_Executed(this);
                 }
             }
         }
-        private void CommandNew_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandNew_Executed(object sender)
         {
             SaveIfChanged();
             DataView = new ModelDataCollectionVM(new ObservableModelData());
         }
 
-        private void CommandOpen_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandOpen_Executed(object sender)
         {
             SaveIfChanged();
             string FileName = ui.OpenFileDGName();
@@ -93,7 +112,7 @@ namespace ViewModel
             }
         }
 
-        private void CommandSave_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandSave_Executed(object sender)
         {
             string FileName = ui.SaveFileDGName();
             if (FileName.Length!= 0)
@@ -110,19 +129,19 @@ namespace ViewModel
             }
         }
 
-        private void CommandDelete_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandDelete_Executed(object sender)
         {
             DataView.ModelDatas.Remove_At(SelectedIndexInList);
         }
 
-        private void CommandSave_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private bool CommandSave_CanExecute(object sender)
         {
-            e.CanExecute = DataView.ModelDatas.HasChanged;
+            return DataView.ModelDatas.HasChanged;
         }
 
-        private void isItemSelected_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private bool isItemSelected_CanExecute(object sender)
         {
-               e.CanExecute = (SelectedIndexInList != -1);
+               return SelectedIndexInList != -1;
         }
 
         private void CommandAddModel_Executed(object sender)
