@@ -53,10 +53,10 @@
                     <Charting:ChartArea Name="scaledArea"/>
                 </Charting:Chart.ChartAreas>
                 <Charting:Chart.Series>
-                    <Charting:Series Name="md1NotScaled" ChartType="Spline" ChartArea="notScaledArea"/>
-                    <Charting:Series Name="md2NotScaled" ChartType="Spline" ChartArea="notScaledArea"/>
-                    <Charting:Series Name="md1Scaled" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Circle" MarkerSize="5"/>
-                    <Charting:Series Name="md2Scaled" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Diamond" MarkerSize="5"/>
+                    <Charting:Series Name="md1NotScaled" Color="DarkRed" ChartType="Spline" ChartArea="notScaledArea"/>
+                    <Charting:Series Name="md2NotScaled" Color="DarkGreen" ChartType="Spline" ChartArea="notScaledArea"/>
+                    <Charting:Series Name="md1Scaled" Color="DarkRed" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Circle" MarkerSize="5"/>
+                    <Charting:Series Name="md2Scaled" Color="DarkGreen" ChartType="Spline" ChartArea="scaledArea" MarkerStyle="Diamond" MarkerSize="5"/>
                 </Charting:Chart.Series>
             </Charting:Chart>
         </WindowsFormsHost>
@@ -73,6 +73,5 @@
             <TextBox x:Name="leftBound" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding Path=DataView.X1, ValidatesOnDataErrors=True}" VerticalAlignment="Top" Width="120"/>
             <TextBox x:Name="rightBound" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding Path=DataView.X2, ValidatesOnDataErrors=True}" VerticalAlignment="Top" Width="120"/>
         </StackPanel>
-
     </Grid>
 </Window>

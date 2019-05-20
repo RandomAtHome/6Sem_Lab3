@@ -32,19 +32,12 @@ namespace third_prac
     }
     public class UI : IUIService
     {
-        private Chart uiChart = null;
         public UI(Chart chart)
         {
-            this.uiChart = chart;
+            UIChart = chart;
         }
 
-        public Chart UIChart
-        {
-            get
-            {
-                return uiChart;
-            }
-        }
+        public Chart UIChart { get; private set; }
 
         public bool ConfirmAction(string text, string title)
         {
