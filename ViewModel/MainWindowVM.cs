@@ -62,11 +62,11 @@ namespace ViewModel
         {
             this.ui = ui;
             DrawCommand = new RelayCommand(
-                _ => CommandDraw_CanExecute(_),
-                _ => CommandDraw_Executed(_)
+                _ => !DataView.HasErrors && (SelectedIndexInList != -1),
+                _ => DataView.Draw(ui.UIChart, DataView.ModelDatas[SelectedIndexInList], DataView.ModelDatas.Farthest(SelectedIndexInList))
             );
             AddModelCommand = new RelayCommand(
-                _ => CommandAddModel_CanExecute(_),
+                _ => !NewModelInputView.HasErrors,
                 _ => CommandAddModel_Executed(_)
             );
             NewCommand = new RelayCommand(
@@ -78,16 +78,16 @@ namespace ViewModel
                 _ => CommandOpen_Executed(_)
             );
             SaveCommand = new RelayCommand(
-                _ => CommandSave_CanExecute(_),
+                _ => DataView.ModelDatas.HasChanged,
                 _ => CommandSave_Executed(_)
             );
             DeleteCommand = new RelayCommand(
-                _ => isItemSelected_CanExecute(_),
-                _ => CommandDelete_Executed(_)
+                _ => SelectedIndexInList != -1,
+                _ => DataView.ModelDatas.Remove_At(SelectedIndexInList)
             );
             AddDefaultsCommand = new RelayCommand(
                 _ => true,
-                _ => addDefaults_Execute(_)
+                _ => DataView.ModelDatas.AddDefaults()
             );
         }
 
@@ -141,21 +141,6 @@ namespace ViewModel
             }
         }
 
-        private void CommandDelete_Executed(object sender)
-        {
-            DataView.ModelDatas.Remove_At(SelectedIndexInList);
-        }
-
-        private bool CommandSave_CanExecute(object sender)
-        {
-            return DataView.ModelDatas.HasChanged;
-        }
-
-        private bool isItemSelected_CanExecute(object sender)
-        {
-               return SelectedIndexInList != -1;
-        }
-
         private void CommandAddModel_Executed(object sender)
         {
             try
@@ -166,23 +151,6 @@ namespace ViewModel
             } catch (Exception ex) {
                 ui.ShowErrorMessage("Exception: " + ex.Message);
             }
-        }
-
-        private void CommandDraw_Executed(object sender)
-        {
-            DataView.Draw(ui.UIChart, DataView.ModelDatas[SelectedIndexInList], DataView.ModelDatas.Farthest(SelectedIndexInList));
-        }
-
-        private bool CommandAddModel_CanExecute(object sender)
-        {
-            return !NewModelInputView.HasErrors;
-        }
-
-        private void addDefaults_Execute(object sender) => DataView.ModelDatas.AddDefaults();
-
-        private bool CommandDraw_CanExecute(object sender)
-        {
-            return !DataView.HasErrors && (SelectedIndexInList != -1);
         }
 
         public void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
