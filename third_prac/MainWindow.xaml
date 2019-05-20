@@ -12,8 +12,10 @@
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:ModelDataVM}">
             <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Parameter}"/>
-                <Label Content="{Binding NodeCount}"/>
+                <TextBlock Text="Param: "/>
+                <TextBlock Text="{Binding Parameter}"/>
+                <TextBlock Text=" | Nodes: "/>
+                <TextBlock Text="{Binding NodeCount}"/>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
@@ -58,10 +60,12 @@
                 </Charting:Chart.Series>
             </Charting:Chart>
         </WindowsFormsHost>
-        <ListBox x:Name="modelsList" ItemsSource="{Binding DataView}" SelectedIndex="{Binding SelectedIndexInList, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="515" Margin="755,45,0,0" VerticalAlignment="Top" Width="227" IsSynchronizedWithCurrentItem="True" RenderTransformOrigin="1.176,0.468"/>
-        <StackPanel x:Name="newModelStack" HorizontalAlignment="Left" Height="94" Margin="10,466,0,0" VerticalAlignment="Top" Width="140">
+        <ListBox x:Name="modelsList" ItemsSource="{Binding DataView.ModelDatas}" SelectedIndex="{Binding SelectedIndexInList, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="515" Margin="755,45,0,0" VerticalAlignment="Top" Width="227" IsSynchronizedWithCurrentItem="True" RenderTransformOrigin="1.176,0.468"/>
+        <StackPanel x:Name="newModelStack" HorizontalAlignment="Left" Height="47" Margin="10,466,0,0" VerticalAlignment="Top" Width="140">
             <TextBox Height="23" TextWrapping="Wrap" x:Name="pInput" Text="{Binding Path=Parameter, ValidatesOnDataErrors=True}"/>
             <TextBox Height="23" TextWrapping="Wrap" x:Name="nodeCountInput" Text="{Binding Path=NodeCount, ValidatesOnDataErrors=True}"/>
+        </StackPanel>
+        <StackPanel x:Name="additionControl" HorizontalAlignment="Left" Height="47" Margin="10,515,0,0" VerticalAlignment="Top" Width="140">
             <Button Content="Add new ModelData" Command="{Binding AddModelCommand}"/>
             <Button Content="Add defaults" Command="{Binding AddDefaultsCommand}"/>
         </StackPanel>
