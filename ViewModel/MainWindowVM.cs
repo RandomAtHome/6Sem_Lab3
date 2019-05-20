@@ -1,6 +1,7 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Input;
 
 namespace ViewModel
 {
@@ -15,18 +17,22 @@ namespace ViewModel
     {
         Chart UIChart { get; }
 
-        bool ConfirmAction(String text, String title);
-        void ShowErrorMessage(String text);
+        bool ConfirmAction(string text, string title);
+
+        string SaveFileDGName();
+        string OpenFileDGName();
+        void ShowErrorMessage(string text);
         // void ReportError(string message);
     }
     class MainWindowVM : INotifyPropertyChanged
     {
         ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
         ModelDataInputVM newModelInputView = new ModelDataInputVM();
-        int selectedIndexInList = -1; 
+        int selectedIndexInList = -1;
 
-        public static RoutedCommand AddModelCommand = new RoutedCommand("AddModel", typeof(_6Sem_Lab2.MainWindow));
-        public static RoutedCommand DrawCommand = new RoutedCommand("Draw", typeof(_6Sem_Lab2.MainWindow));
+        public ICommand AddModelCommand { get; private set; }
+        public ICommand DrawCommand { get; private set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IUIService ui = null;
@@ -44,6 +50,14 @@ namespace ViewModel
         public MainWindowVM(IUIService ui)
         {
             this.ui = ui;
+            DrawCommand = new RelayCommand(
+                _ => CommandDraw_CanExecute(_),
+                _ => CommandDraw_Executed(_)
+            );
+            AddModelCommand = new RelayCommand(
+                _ => CommandAddModel_CanExecute(_),
+                _ => CommandAddModel_Executed(_)
+            );
         }
 
         private void SaveIfChanged()
@@ -65,12 +79,12 @@ namespace ViewModel
         private void CommandOpen_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             SaveIfChanged();
-            var dg = new Microsoft.Win32.OpenFileDialog();
-            if (dg.ShowDialog() == true)
+            string FileName = ui.OpenFileDGName();
+            if (FileName.Length != 0)
             {
                 try
                 {
-                    Load(dg.FileName);
+                    Load(FileName);
                 }
                 catch (Exception)
                 {
@@ -81,13 +95,13 @@ namespace ViewModel
 
         private void CommandSave_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var dg = new Microsoft.Win32.SaveFileDialog();
-            if (dg.ShowDialog() == true)
+            string FileName = ui.SaveFileDGName();
+            if (FileName.Length!= 0)
             {
                 try
                 {
                     DataView.ModelDatas.HasChanged = false;
-                    Save(dg.FileName);
+                    Save(FileName);
                 }
                 catch (Exception)
                 {
@@ -111,54 +125,48 @@ namespace ViewModel
                e.CanExecute = (SelectedIndexInList != -1);
         }
 
-        private void CommandAddModel_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandAddModel_Executed(object sender)
         {
             DataView.ModelDatas.Add_ModelData(new ModelDataVM(
                 new ModelData(int.Parse(newModelInputView.NodeCount), double.Parse(newModelInputView.NodeCount))
             ));
         }
 
-        private void CommandDraw_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void CommandDraw_Executed(object sender)
         {
             DataView.Draw(ui.UIChart, DataView.ModelDatas[SelectedIndexInList], DataView.ModelDatas.Farthest(SelectedIndexInList));
         }
 
-        private void CommandAddModel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private bool CommandAddModel_CanExecute(object sender)
         {
-            if (pInput == null || nodeCountInput == null)
-            {
-                e.CanExecute = false;
-                return;
-            }
             pInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
             nodeCountInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
             foreach (FrameworkElement child in newModelStack.Children)
             {
                 if (Validation.GetHasError(child))
                 {
-                    e.CanExecute = false;
-                    return;
+                    return false;
                 }
             }
-            e.CanExecute = true;
+            return true;
         }
 
         private void addDefaults_Click(object sender, RoutedEventArgs e) => DataView.ModelDatas.AddDefaults();
 
-        private void CommandDraw_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private bool CommandDraw_CanExecute(object sender)
         {
-            e.CanExecute = (SelectedIndexInList != -1);
-            if (e.CanExecute && boundsStack != null)
+            bool result = (SelectedIndexInList != -1);
+            if (result && boundsStack != null)
             {
                 foreach (FrameworkElement child in boundsStack.Children)
                 {
                     if (Validation.GetHasError(child))
                     {
-                        e.CanExecute = false;
-                        return;
+                        return false;
                     }
                 }
             }
+            return result;
         }
 
         private void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
@@ -176,7 +184,7 @@ namespace ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception: " + ex.Message);
+                ui.ShowErrorMessage("Exception: " + ex.Message);
             }
             finally
             {
@@ -193,14 +201,13 @@ namespace ViewModel
             {
                 fs = File.OpenRead(filename);
                 BinaryFormatter bf = new BinaryFormatter();
-                Resources["key_ObsModelData"] = bf.Deserialize(fs) as ObservableModelData;
-                DataView.ModelDatas = FindResource("key_ObsModelData") as ObservableModelData;
+                DataView = new ModelDataCollectionVM(bf.Deserialize(fs) as ObservableModelData);
                 DataView.ModelDatas.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => DataView.ModelDatas.HasChanged = true;
                 result = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception: " + ex.Message);
+                ui.ShowErrorMessage("Exception: " + ex.Message);
             }
             finally
             {

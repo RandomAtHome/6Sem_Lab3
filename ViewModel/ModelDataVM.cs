@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ViewModel
 {
-    public class ModelDataVM : INotifyPropertyChanged, IDataErrorInfo
+    [Serializable]
+    public class ModelDataVM : IDataErrorInfo
     {
         private readonly ModelData modelData;
-        public event PropertyChangedEventHandler PropertyChanged;
         public double Parameter { get => modelData.Parameter; }
         public int NodeCount { get => modelData.NodeCount; }
         public double[] Nodes => modelData.Nodes;

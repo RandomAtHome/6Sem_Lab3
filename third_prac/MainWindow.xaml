@@ -11,7 +11,7 @@
         Title="Lab #3 Chukharev 301" Height="600" Width="1000"
         Closed="Window_Closed">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:}">
+        <DataTemplate DataType="{x:Type vm:ModelDataVM}">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{Binding Parameter}"/>
                 <Label Content="{Binding NodeCount}"/>
