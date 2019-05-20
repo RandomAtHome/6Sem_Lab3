@@ -59,10 +59,11 @@ namespace ViewModel
     }
     public class ModelDataInputVM : INotifyPropertyChanged, IDataErrorInfo
     {
-        private string parameter = ModelData.PMin.ToString(), nodeCount = "3";
+        private double parameter = ModelData.PMin;
+        private int nodeCount = 3;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public string Parameter
+        public double Parameter
         {
             get => parameter;
             set
@@ -71,7 +72,7 @@ namespace ViewModel
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Parameter"));
             }
         }
-        public string NodeCount
+        public int NodeCount
         {
             get => nodeCount;
             set
@@ -98,13 +99,13 @@ namespace ViewModel
                     switch (columnName)
                     {
                         case "Parameter":
-                            if (ModelData.PMin > double.Parse(Parameter) || double.Parse(Parameter) > ModelData.PMax)
+                            if (ModelData.PMin > Parameter || Parameter > ModelData.PMax)
                             {
                                 message = "P value is offbounds!";
                             }
                             break;
                         case "NodeCount":
-                            if (int.Parse(NodeCount) < 3)
+                            if (NodeCount < 3)
                             {
                                 message = "Node count is less than 3!";
                             }

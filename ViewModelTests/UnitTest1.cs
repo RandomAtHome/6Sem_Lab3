@@ -24,11 +24,11 @@ namespace ViewModelTests
         {
             var vm = new ViewModel.ModelDataInputVM();
             Assert.AreEqual(vm.HasErrors, false);
-            vm.NodeCount = "2";
+            vm.NodeCount = 2;
             Assert.AreNotEqual(vm["NodeCount"], string.Empty);
-            vm.Parameter = (Model.ModelData.PMin - 1).ToString();
+            vm.Parameter = Model.ModelData.PMin - 1;
             Assert.AreNotEqual(vm["Parameter"], string.Empty);
-            vm.Parameter = (Model.ModelData.PMax + 1).ToString();
+            vm.Parameter = Model.ModelData.PMax + 1;
             Assert.AreNotEqual(vm["Parameter"], string.Empty);
         }
 

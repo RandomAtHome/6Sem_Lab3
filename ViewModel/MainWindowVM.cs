@@ -146,7 +146,7 @@ namespace ViewModel
             try
             {
                 DataView.ModelDatas.Add_ModelData(new ModelDataVM(
-                    new ModelData(int.Parse(NewModelInputView.NodeCount), double.Parse(NewModelInputView.Parameter))
+                    new ModelData(NewModelInputView.NodeCount, NewModelInputView.Parameter)
                 ));
             } catch (Exception ex) {
                 ui.ShowErrorMessage("Exception: " + ex.Message);
