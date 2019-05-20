@@ -80,6 +80,13 @@ namespace ViewModel
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("NodeCount"));
             }
         }
+        public bool HasErrors
+        {
+            get
+            {
+                return this["Parameter"].Length != 0 || this["NodeCount"].Length != 0;
+            }
+        } 
         public string Error => throw new NotImplementedException();
         public string this[string columnName]
         {

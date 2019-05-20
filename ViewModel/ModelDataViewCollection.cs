@@ -77,7 +77,13 @@ namespace ViewModel
                 return message;
             }
         }
-
+        public bool HasErrors
+        {
+            get
+            {
+                return this["X1"].Length != 0 || this["X2"].Length != 0;
+            }
+        }
         public ModelDataCollectionVM(ObservableModelData modelDatas)
         {
             this.ModelDatas = modelDatas;
