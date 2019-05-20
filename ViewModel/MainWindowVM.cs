@@ -163,15 +163,15 @@ namespace ViewModel
 
         private bool CommandAddModel_CanExecute(object sender)
         {
-            pInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            nodeCountInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            foreach (FrameworkElement child in newModelStack.Children)
-            {
-                if (Validation.GetHasError(child))
-                {
-                    return false;
-                }
-            }
+            //pInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            //nodeCountInput.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            //foreach (FrameworkElement child in newModelStack.Children)
+            //{
+            //    if (Validation.GetHasError(child))
+            //    {
+            //        return false;
+            //    }
+            //}
             return true;
         }
 
@@ -180,20 +180,20 @@ namespace ViewModel
         private bool CommandDraw_CanExecute(object sender)
         {
             bool result = (SelectedIndexInList != -1);
-            if (result && boundsStack != null)
-            {
-                foreach (FrameworkElement child in boundsStack.Children)
-                {
-                    if (Validation.GetHasError(child))
-                    {
-                        return false;
-                    }
-                }
-            }
+            //if (result && boundsStack != null)
+            //{
+            //    foreach (FrameworkElement child in boundsStack.Children)
+            //    {
+            //        if (Validation.GetHasError(child))
+            //        {
+            //            return false;
+            //        }
+            //    }
+            //}
             return result;
         }
 
-        private void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
+        public void Window_Closed(object sender, EventArgs e) => SaveIfChanged();
 
         public bool Save(string filename)
         {

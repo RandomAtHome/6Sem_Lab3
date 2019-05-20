@@ -25,11 +25,18 @@ namespace third_prac
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowVM(new UI());
+            DataContext = new MainWindowVM(new UI(uiChart));
+            Closed += (DataContext as MainWindowVM).Window_Closed;
         }
     }
     public class UI : IUIService
     {
+        private Chart uiChart = null;
+        public UI(Chart chart)
+        {
+            this.uiChart = chart;
+        }
+
         public Chart UIChart
         {
             get
