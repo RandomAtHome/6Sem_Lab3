@@ -44,6 +44,7 @@ namespace ViewModel
             }
         }
         int selectedIndexInList = -1;
+        public int SelectedIndexInList { get => selectedIndexInList; set => selectedIndexInList = value; }
 
         public ICommand AddModelCommand { get; private set; }
         public ICommand DrawCommand { get; private set; }
@@ -56,8 +57,6 @@ namespace ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IUIService ui = null;
-
-        public int SelectedIndexInList { get => selectedIndexInList; set => selectedIndexInList = value; }
 
         public MainWindowVM(IUIService ui)
         {
