@@ -19,39 +19,27 @@
         </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Command="{x:Static local:MainWindow.AddModelCommand}"
+        <KeyBinding Command="{Binding AddModelCommand}"
                     Gesture="Ctrl+Alt+A"/>
     </Window.InputBindings>
-    <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.New"
-                        Executed="CommandNew_Executed"/>
-        <CommandBinding Command="ApplicationCommands.Open"
-                        Executed="CommandOpen_Executed"/>
-        <CommandBinding Command="ApplicationCommands.Save"
-                        Executed="CommandSave_Executed"
-                        CanExecute="CommandSave_CanExecute"/>
-        <CommandBinding Command="ApplicationCommands.Delete"
-                        Executed="CommandDelete_Executed"
-                        CanExecute="isItemSelected_CanExecute"/>
-    </Window.CommandBindings>
     <Grid>
         <Menu Height="20" VerticalAlignment="Top">
             <MenuItem Header="_File" Width="100">
                 <MenuItem Header="_New" Command="ApplicationCommands.New"/>
-                <MenuItem Header="_Open" Command="ApplicationCommands.Open"/>
-                <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
+                <MenuItem Header="_Open" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
             </MenuItem>
             <MenuItem x:Name="menuItem" Header="_Edit" Width="100">
                 <MenuItem Header="_Add" Command="{Binding AddModelCommand}"/>
-                <MenuItem Header="_Remove" Command="ApplicationCommands.Delete"/>
+                <MenuItem Header="_Remove" Command="{Binding DeleteCommand}"/>
             </MenuItem>
             <MenuItem Header="_Draw" Width="100" Command="{Binding DrawCommand}"/>
         </Menu>
         <ToolBar Height="25" VerticalAlignment="Top" Margin="0,20,0,0">
-            <Button Content="Open" Command="ApplicationCommands.Open"/>
-            <Button Content="Save" Command="ApplicationCommands.Save"/>
+            <Button Content="Open" Command="{Binding OpenCommand}"/>
+            <Button Content="Save" Command="{Binding SaveCommand}"/>
             <Button Content="Add" Command="{Binding AddModelCommand}"/>
-            <Button Content="Remove" Command="ApplicationCommands.Delete"/>
+            <Button Content="Remove" Command="{Binding DeleteCommand}"/>
             <Button Content="Draw" Command="{Binding DrawCommand}"/>
         </ToolBar>
         <WindowsFormsHost x:Name="winChartHost" HorizontalAlignment="Left" Height="416" Margin="10,45,0,0" VerticalAlignment="Top" Width="740">
@@ -75,8 +63,8 @@
         <StackPanel x:Name="newModelStack" HorizontalAlignment="Left" Height="94" Margin="10,466,0,0" VerticalAlignment="Top" Width="140">
             <TextBox Height="23" TextWrapping="Wrap" x:Name="pInput" Text="{Binding Path=Parameter, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
             <TextBox Height="23" TextWrapping="Wrap" x:Name="nodeCountInput" Text="{Binding Path=NodeCount, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
-            <Button Content="Add new ModelData" Command="{x:Static local:MainWindow.AddModelCommand}"/>
-            <Button Content="Add defaults" Click="addDefaults_Click"/>
+            <Button Content="Add new ModelData" Command="{Binding AddModelCommand}"/>
+            <Button Content="Add defaults" Command="{Binding AddDefaultsCommand}"/>
         </StackPanel>
         <StackPanel Margin="155,466,592,72" Orientation="Horizontal" x:Name="boundsStack">
             <TextBox x:Name="leftBound" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="{Binding Path=X1, ValidatesOnDataErrors=True}" VerticalAlignment="Top" Width="120"/>

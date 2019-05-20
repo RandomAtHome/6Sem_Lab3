@@ -35,6 +35,7 @@ namespace ViewModel
         public ICommand SaveCommand { get; private set; }
         public ICommand OpenCommand { get; private set; }
         public ICommand DeleteCommand { get; private set; }
+        public ICommand AddDefaultsCommand { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -76,6 +77,10 @@ namespace ViewModel
             DeleteCommand = new RelayCommand(
                 _ => isItemSelected_CanExecute(_),
                 _ => CommandDelete_Executed(_)
+            );
+            AddDefaultsCommand = new RelayCommand(
+                _ => true,
+                _ => addDefaults_Execute(_)
             );
         }
 
@@ -170,7 +175,7 @@ namespace ViewModel
             return true;
         }
 
-        private void addDefaults_Click(object sender, RoutedEventArgs e) => DataView.ModelDatas.AddDefaults();
+        private void addDefaults_Execute(object sender) => DataView.ModelDatas.AddDefaults();
 
         private bool CommandDraw_CanExecute(object sender)
         {
