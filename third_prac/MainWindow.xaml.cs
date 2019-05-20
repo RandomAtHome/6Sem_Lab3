@@ -26,6 +26,7 @@ namespace third_prac
         {
             InitializeComponent();
             DataContext = new MainWindowVM(new UI(uiChart));
+            newModelStack.DataContext = (DataContext as MainWindowVM).NewModelInputView;
             Closed += (DataContext as MainWindowVM).Window_Closed;
         }
     }

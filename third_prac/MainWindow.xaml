@@ -24,7 +24,7 @@
     <Grid>
         <Menu Height="20" VerticalAlignment="Top">
             <MenuItem Header="_File" Width="100">
-                <MenuItem Header="_New" Command="ApplicationCommands.New"/>
+                <MenuItem Header="_New" Command="{Binding NewCommand}"/>
                 <MenuItem Header="_Open" Command="{Binding OpenCommand}"/>
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
             </MenuItem>
@@ -58,10 +58,10 @@
                 </Charting:Chart.Series>
             </Charting:Chart>
         </WindowsFormsHost>
-        <ListBox x:Name="modelsList" ItemsSource="{Binding}" ItemTemplate="{DynamicResource key_Template}" HorizontalAlignment="Left" Height="515" Margin="755,45,0,0" VerticalAlignment="Top" Width="227" IsSynchronizedWithCurrentItem="True" RenderTransformOrigin="1.176,0.468"/>
+        <ListBox x:Name="modelsList" ItemsSource="{Binding DataView}" HorizontalAlignment="Left" Height="515" Margin="755,45,0,0" VerticalAlignment="Top" Width="227" IsSynchronizedWithCurrentItem="True" RenderTransformOrigin="1.176,0.468"/>
         <StackPanel x:Name="newModelStack" HorizontalAlignment="Left" Height="94" Margin="10,466,0,0" VerticalAlignment="Top" Width="140">
-            <TextBox Height="23" TextWrapping="Wrap" x:Name="pInput" Text="{Binding Path=Parameter, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
-            <TextBox Height="23" TextWrapping="Wrap" x:Name="nodeCountInput" Text="{Binding Path=NodeCount, Source={StaticResource key_DummyModel}, ValidatesOnDataErrors=True}"/>
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="pInput" Text="{Binding Path=Parameter, ValidatesOnDataErrors=True}"/>
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="nodeCountInput" Text="{Binding Path=NodeCount, ValidatesOnDataErrors=True}"/>
             <Button Content="Add new ModelData" Command="{Binding AddModelCommand}"/>
             <Button Content="Add defaults" Command="{Binding AddDefaultsCommand}"/>
         </StackPanel>

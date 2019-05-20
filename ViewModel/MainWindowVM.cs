@@ -26,7 +26,23 @@ namespace ViewModel
     public class MainWindowVM : INotifyPropertyChanged
     {
         ModelDataCollectionVM dataView = new ModelDataCollectionVM(new ObservableModelData());
+        public ModelDataCollectionVM DataView
+        {
+            get => dataView;
+            private set
+            {
+                dataView = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DataView"));
+            }
+        }
         ModelDataInputVM newModelInputView = new ModelDataInputVM();
+        public ModelDataInputVM NewModelInputView { get => newModelInputView;
+            set
+            {
+                newModelInputView = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("NewModelInputView"));
+            }
+        }
         int selectedIndexInList = -1;
 
         public ICommand AddModelCommand { get; private set; }
@@ -40,14 +56,6 @@ namespace ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IUIService ui = null;
-
-        public ModelDataCollectionVM DataView { get => dataView;
-            private set
-            {
-                dataView = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DataView"));
-            }
-        }
 
         public int SelectedIndexInList { get => selectedIndexInList; set => selectedIndexInList = value; }
 
@@ -152,7 +160,7 @@ namespace ViewModel
         private void CommandAddModel_Executed(object sender)
         {
             DataView.ModelDatas.Add_ModelData(new ModelDataVM(
-                new ModelData(int.Parse(newModelInputView.NodeCount), double.Parse(newModelInputView.NodeCount))
+                new ModelData(int.Parse(NewModelInputView.NodeCount), double.Parse(NewModelInputView.NodeCount))
             ));
         }
 
